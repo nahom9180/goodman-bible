@@ -143,6 +143,7 @@ body.fullscreen-active .navbar {
     overflow: hidden;
     text-overflow: ellipsis;
     user-select: none;
+ text-shadow: 0 0 15px rgba(var(--brand-color-rgb), 1), 0 0 10px rgba(var(--brand-color-rgb), 0.8), 0 0 5px rgba(0, 0, 0, 0.5);
 }
 .nav-controls {
     display: flex;
@@ -1916,89 +1917,91 @@ hr.settings-hr {
     line-height: 1.5;
     text-align: left;
 }
-/* Style for the tabs */
-#crossRefPanelHeader button { /* Or use specific IDs like #crossRefTab */
-    padding: 10px 15px;
+/* --- Themeable Scrollbar Styles --- */
+/* For Webkit-based browsers (Chrome, Safari, Edge, etc.) */
+::-webkit-scrollbar {
+    width: 12px; /* Width of the vertical scrollbar */
+    height: 12px; /* Height of the horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color); /* The track (the background) of the scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--options-panel-border); /* The draggable scrolling handle */
+    border-radius: 10px; /* Roundness of the scrolling handle */
+    border: 3px solid var(--bg-color); /* Creates padding around the handle */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--brand-color); /* The handle on hover */
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin; /* Can be "auto", "thin", or "none" */
+    scrollbar-color: var(--options-panel-border) var(--bg-color); /* thumb and track color */
+}
+
+/* --- Hamburger Menu Button --- */
+.hamburger-button {
+    padding: 10px;
+    display: inline-block;
     cursor: pointer;
-    /* Add other styling */
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+    transition: opacity 0.2s ease-in-out;
 }
 
-/* Style for the active tab */
-#crossRefPanelHeader button.active { /* Add 'active' class with JS */
-    /* Add active state styling */
+.hamburger-button:hover {
+    opacity: 0.8;
 }
 
-/* Initially hide notes content */
-#notesPanelContent {
-    display: none;
-}
-
-/* Show notes content when notes tab is active */
-/* You'll need a rule that targets #notesPanelContent when the notes tab is active.
-   This might depend on how you implement the tab switching in JavaScript (e.g., adding a class to the parent container).
-   Example:
-   #crossRefPanelBody.notes-active #notesPanelContent {
-       display: block;
-   }
-   #crossRefPanelBody.notes-active #crossRefListContainer {
-       display: none;
-   }
-*/
-/* Styles for the tab container in the side panel header */
-.side-panel-header {
-    display: flex; /* Arrange items horizontally */
-    justify-content: space-between; /* Distribute space between items */
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--options-panel-border);
-    flex-shrink: 0;
-    /* Add or adjust existing styles as needed */
-}
-
-/* Styles for the tab buttons */
-#crossRefPanelHeader button { /* Assuming the tabs are buttons in the header */
-    padding: 8px 15px;
-    cursor: pointer;
-    background-color: transparent; /* Default state */
-    border: none;
-    border-bottom: 2px solid transparent; /* Underline effect */
-    color: var(--text-color);
-    font-size: 1rem;
-    transition: color 0.2s, border-bottom-color 0.2s;
-}
-
-#crossRefPanelHeader button:hover {
-    color: var(--brand-color);
-}
-
-/* Style for the active tab */
-#crossRefPanelHeader button.active { /* Add 'active' class with JavaScript */
-    color: var(--brand-color);
-    border-bottom-color: var(--brand-color);
-    font-weight: bold;
-}
-
-/* Ensure the content areas are within the side panel body */
-.side-panel-body {
-    /* Ensure this allows for scrolling if content overflows */
-    overflow-y: auto;
-    flex-grow: 1;
-    padding: 15px 20px; /* Add padding to the content area */
-}
-
-/* Hide the notes content by default */
-#notesPanelContent {
-    display: none;
-}
-
-/* CSS to show the active content (example using a class on the body or a container) */
-/* You'll need to adjust this based on your JavaScript implementation */
-/* Example: If you add a class 'notes-active' to the body when notes tab is clicked */
-/*
-body.notes-active #notesPanelBody #notesPanelContent {
+.hamburger-box {
+    width: 28px; /* Width of the icon */
+    height: 20px; /* Height of the icon */
     display: block;
+    position: relative;
 }
-body.notes-active #crossRefListContainer {
-    display: none;
+
+.hamburger-inner {
+    display: block;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--navbar-text);
+    height: 4px; /* Fatter middle line */
+    width: 100%;
+    border-radius: 4px;
+    position: absolute;
+    transition: background-color 0.2s ease-in-out;
 }
-*/
+
+.hamburger-inner::before,
+.hamburger-inner::after {
+    content: '';
+    display: block;
+    background-color: var(--navbar-text);
+    height: 3px; /* Thinner top/bottom lines */
+    width: 100%;
+    border-radius: 4px;
+    position: absolute;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.hamburger-inner::before {
+    top: -9px;
+}
+
+.hamburger-inner::after {
+    bottom: -9px;
+}
+
+/* Change color to brand color on hover */
+.hamburger-button:hover .hamburger-inner,
+.hamburger-button:hover .hamburger-inner::before,
+.hamburger-button:hover .hamburger-inner::after {
+    background-color: var(--brand-color);
+}
+

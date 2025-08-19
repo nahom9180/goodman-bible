@@ -1,0 +1,110 @@
+:root {
+    /* Base theme: Dark (Original) */
+    --bg-color: #1a1a1d;
+    --text-color: #c5c6c7;
+    --navbar-bg: #000000;
+    --navbar-text: #f0f0f0;
+    --brand-color: #DC143C; /* Crimson */
+    --verse-card-bg: #2c2f33;
+    --verse-text-color: #e0e0e0;
+    --reference-color: #DC143C; /* Crimson */
+    --progress-bar-track: #000000;
+    --progress-bar-fill: #DC143C; /* Crimson */
+    --progress-bar-fill-paused: #8a0f29; /* Darker Crimson */
+    --button-bg: #DC143C; /* Crimson */
+    --button-text: #ffffff;
+    --button-hover-bg: #b21030; /* Darker Crimson */
+
+    /* Options Panel & Buttons related to it */
+    --options-button-bg: var(--brand-color);
+    --options-button-text: var(--button-text);
+    --options-button-hover-bg: var(--button-hover-bg);
+    --options-panel-bg: #1e1e21;
+    --options-panel-border: #4f4f52;
+    --options-panel-text: var(--navbar-text);
+    --options-panel-item-hover-bg: rgba(255,255,255,0.05);
+
+    /* Modal Styles */
+    --modal-bg: rgba(0,0,0,0.7);
+    --modal-content-bg: var(--bg-color);
+    --modal-content-text: var(--text-color);
+    --modal-highlight-bg: rgba(220,20,60,0.15); /* Light Crimson tint */
+    --modal-highlight-border: var(--brand-color);
+
+    /* Verse transition and highlighting */
+    --verse-change-flash-bg: #440000; /* Dark Red flash */
+    --verse-text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+
+    /* Specific Timer icon buttons if different style needed */
+    --timer-icon-button-bg: rgba(255,255,255,0.1);
+    --timer-icon-button-hover-bg: rgba(255,255,255,0.2);
+    --timer-icon-button-fill: var(--options-panel-text);
+    --timer-icon-button-border: var(--options-panel-border);
+
+    /* Settings modal specific overrides (if needed) */
+    --settings-modal-header-color: var(--brand-color);
+
+    /* Floating button for fullscreen (can be styled separately) */
+    --floating-button-bg: rgba(0,0,0,0.6);
+    --floating-button-hover-bg: rgba(0,0,0,0.8);
+    --floating-button-icon-fill: var(--navbar-text);
+
+    /* Collection Note Specific */
+    --collection-note-color: var(--text-color);
+    --collection-note-border-color: var(--options-panel-border);
+    --collection-note-bg: rgba(79,79,82,0.15); /* Slightly off-bg color */
+
+    /* Fullscreen editor styles (if added later) */
+    --fullscreen-editor-bg: var(--bg-color);
+    --fullscreen-editor-text: var(--text-color);
+    --fullscreen-editor-textarea-bg: var(--verse-card-bg);
+
+    /* RGB value of brand-color (for RGBA opacity) */
+    --brand-color-rgb: 220, 20, 60; /* Crimson's RGB */
+    --button-text-rgb: 255,255,255; /* For --dm-button:disabled color if used */
+
+
+    /* Font Sizes (Base and Scalable) */
+    --base-font-size: 16px;
+    --navbar-font-size: 1.1rem;
+    --verse-font-size-multiplier: 1.0; /* Initial scale, controlled by JS */
+    --scaled-verse-font-size: calc(2.2rem * var(--verse-font-size-multiplier));
+    --scaled-reference-font-size: calc(1.5rem * var(--verse-font-size-multiplier));
+    --scaled-verse-number-font-size: calc(1.2rem * var(--verse-font-size-multiplier));
+
+
+    /* Default verse font family (can be overridden by JS) */
+    --verse-font-family: 'Roboto Slab', serif;
+
+    /* Audiovisual Variables - Set by JS */
+    --av-bg-image-blur: 0px;
+    --av-bg-image-overlay-opacity: 0.5;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Disable tap highlight on mobile */
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--base-font-size);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden; 
+}
+body.fullscreen-active {
+    overflow: hidden !important; 
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    CONTAIN-INTRINSIC-BLOCK-SIZE: AUTO 100PX;
+}
