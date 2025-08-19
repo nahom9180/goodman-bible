@@ -1,0 +1,86 @@
+﻿.
+├── .idx/
+│   ├── airules.md
+│   ├── dev.nix
+│   └── mcp.json
+├── .vscode/
+│   └── settings.json
+├── assets/
+│   └── icons/
+│       ├── Debo
+│       ├── icon-192x192.png
+│       ├── icon-512x512.png
+│       └── image.jpeg
+├── blueprint.md
+├── js/
+│   ├── core/
+│   │   ├── app.js
+│   │   ├── bibleManager.js
+│   │   ├── collectionManager.js
+│   │   ├── settings.
+│   │   └── timer.js
+│   ├── database/
+│   │   └── db.js
+│   ├── pages/
+│   │   ├── datamanager.js
+│   │   └── index.js
+│   ├── ui/
+│   │   ├── modals.js
+│   │   ├── navbar.js
+│   │   ├── sidePanel.js
+│   │   └── statusBar.js
+│   └── utils/
+│       ├── constants.js
+│       ├── extractor.js
+│       └── parser.js
+├── scripts/
+│   ├── audiovisual_integrations.js
+│   ├── audiovisual_manager.js
+│   ├── audiovisual_settings_script.js
+│   ├── bulk_reference_compiler.js
+│   ├── cross_ref_manager.js
+│   ├── datamanager_script.js
+│   ├── exporter_script.js
+│   ├── extractor_script.js
+│   ├── main_app_script.js
+│   ├── notes_manager.js
+│   ├── openbible_topics_importer.js
+│   ├── script.js
+│   └── side_panel_manager.js
+├── styles/
+│   ├── components/
+│   │   ├── buttons.css
+│   │   ├── modals.css
+│   │   └── navbar.css
+│   ├── pages/
+│   │   └── index.css
+│   ├── base.css
+│   └── style.css
+├── app.html
+├── audiovisual_manager.html
+├── audiovisual_settings.html
+├── datamanager.html
+├── exporter.html
+├── help.html
+├── index.html
+├── manifest.json
+├── README.md
+├── sw.js
+└── tools.html
+
+
+"Continuing the refactoring process, the next crucial step is to consolidate the CSS files. Please perform the following actions:
+
+Create/Update styles/style.css: This file should act as the main entry point for all application styles. It needs to @import the following files in the specified order:
+
+styles/base.css (for root variables and universal styles)
+styles/components/buttons.css
+styles/components/modals.css
+styles/components/navbar.css
+styles/pages/index.css (for page-specific styles)
+Ensure any other general or leftover styles from the original styles/style.css (excluding those already moved) are incorporated into this new master style.css or their respective component/page files. This includes styles for fullscreen, main content area, app status bar, quick seek panel, data manager, AV settings, notes, and general utilities like scrollbar styles and responsive adjustments.
+Update index.html: Remove any remaining inline <style> tags from index.html. Ensure it only links to the newly structured styles/style.css file.
+
+Update blueprint.md: Mark the CSS refactoring steps as completed in the blueprint.md file, specifically updating the 'Refactor CSS' section to reflect these changes.
+
+Proceed with these steps, and confirm when the CSS refactoring for index.html is complete." and working for all the html files the user might open.
