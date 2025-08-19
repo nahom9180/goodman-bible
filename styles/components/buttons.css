@@ -1,0 +1,62 @@
+.cta-button,
+.secondary-button,
+.dm-button,
+.subtle-button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.cta-button {
+    background-color: var(--brand-color);
+    color: var(--button-text);
+    border-color: var(--brand-color);
+}
+
+.cta-button:hover {
+    background-color: var(--button-hover-bg);
+    border-color: var(--button-hover-bg);
+}
+
+.secondary-button {
+    background-color: transparent;
+    color: var(--text-color);
+    border-color: var(--options-panel-border);
+}
+
+.secondary-button:hover {
+    background-color: var(--options-panel-item-hover-bg);
+    border-color: var(--brand-color);
+}
+
+.subtle-button {
+    background-color: transparent;
+    border-color: var(--brand-color);
+    color: var(--brand-color);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+.subtle-button:hover {
+    background-color: var(--brand-color);
+    color: var(--button-text-color);
+}
+
+.dm-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+}
+
+.dm-button:hover:not(:disabled) {
+    background-color: var(--button-hover-bg);
+}
+
+.dm-button:disabled {
+    background-color: var(--progress-bar-track); 
+    color: rgba(var(--button-text-rgb), 0.7); 
+    cursor: not-allowed;
+}

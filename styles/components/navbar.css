@@ -1,0 +1,125 @@
+.navbar {
+    background-color: var(--navbar-bg);
+    color: var(--navbar-text);
+    padding: 3px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+body.fullscreen-active .navbar {
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    font-size: var(--navbar-font-size);
+    font-weight: 600;
+    color: var(--brand-color); 
+    text-decoration: none;
+    max-width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+}
+
+/* Options Button within Navbar */
+#optionsBtn {
+    background: none;
+    border: none;
+    color: var(--navbar-text);
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+#optionsBtn:hover {
+    color: var(--brand-color);
+}
+
+/* Hamburger Button (if used in navbar) */
+.hamburger-button {
+    padding: 10px;
+    display: inline-block;
+    cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.hamburger-button:hover {
+    opacity: 0.8;
+}
+
+.hamburger-box {
+    width: 28px; /* Width of the icon */
+    height: 20px; /* Height of the icon */
+    display: block;
+    position: relative;
+}
+
+.hamburger-inner {
+    display: block;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--navbar-text);
+    height: 4px; /* Fatter middle line */
+    width: 100%;
+    border-radius: 4px;
+    position: absolute;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.hamburger-inner::before,
+.hamburger-inner::after {
+    content: '';
+    display: block;
+    background-color: var(--navbar-text);
+    height: 3px; /* Thinner top/bottom lines */
+    width: 100%;
+    border-radius: 4px;
+    position: absolute;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.hamburger-inner::before {
+    top: -9px;
+}
+
+.hamburger-inner::after {
+    bottom: -9px;
+}
+
+/* Change color to brand color on hover */
+.hamburger-button:hover .hamburger-inner,
+.hamburger-button:hover .hamburger-inner::before,
+.hamburger-button:hover .hamburger-inner::after {
+    background-color: var(--brand-color);
+}
+
+/* Data Manager Navbar (dm-navbar-page-title is specific to that page) */
+.dm-navbar-page-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--navbar-text);
+}
+
+#dmNavbarBrand { color: var(--brand-color); }
