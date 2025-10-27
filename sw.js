@@ -1,12 +1,17 @@
 // sw.js
 
-// Increment this version number whenever you update any of the cached files.
-const CACHE_VERSION = 3; // Incremented version to trigger a new install
-const CACHE_NAME = `divine-words-cache-v${CACHE_VERSION}`;
+// Offline-first Service Worker for goodman-bible
+// - Uses a cache-first strategy for navigation and static assets (serves cached content when available)
+// - Falls back to network when resource is not cached, then caches successful network responses
+// - Handles third-party resources gracefully during install (doesn't fail install if an item can't be cached)
+// - Cleans up old caches on activate and claims clients so the new SW takes control immediately
 
-// A comprehensive list of all files, including legacy scripts.
+const CACHE_VERSION = 4;
+const CACHE_NAME = `divine-words-cache-v${CACHE_VERSION}`;
+const OFFLINE_FALLBACK = './index.html';
+
+// Files to pre-cache (same-origin preferred). External resources may fail to cache and will be skipped.
 const urlsToCache = [
-  // Root and HTML files
   './',
   'index.html',
   'app.html',
@@ -18,7 +23,7 @@ const urlsToCache = [
   'help.html',
   'manifest.json',
 
-  // CSS Files
+  // CSS
   'styles/style.css',
   'styles/base.css',
   'styles/components/buttons.css',
@@ -29,7 +34,7 @@ const urlsToCache = [
   'styles/pages/exporter.css',
   'styles/pages/index.css',
 
-  // LEGACY JavaScript Files from /scripts/ folder
+  // Legacy scripts (if still used by pages)
   'scripts/script.js',
   'scripts/main_app_script.js',
   'scripts/datamanager_script.js',
@@ -43,8 +48,8 @@ const urlsToCache = [
   'scripts/notes_manager.js',
   'scripts/openbible_topics_importer.js',
   'scripts/side_panel_manager.js',
-  
-  // NEW Refactored JavaScript Modules
+
+  // Refactored modules
   'js/core/app.js',
   'js/core/bibleManager.js',
   'js/core/collectionManager.js',
@@ -58,11 +63,13 @@ const urlsToCache = [
   'js/utils/constants.js',
   'js/utils/parser.js',
 
-  // App Icons
+  // Icons
   'assets/icons/icon-192x192.png',
-  'assets/icons/icon-512x512.png',
+  'assets/icons/icon-512x512.png'
+];
 
-  // External Libraries
+// External resources which might be opaque/no-cors responses. We'll attempt to fetch them but won't fail install if they cannot be cached.
+const externalResources = [
   'https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&family=Roboto+Slab:wght@400;700&display=swap',
   'https://unpkg.com/tippy.js@6/dist/tippy.css',
   'https://cdn.jsdelivr.net/npm/marked/marked.min.js',
@@ -70,80 +77,151 @@ const urlsToCache = [
   'https://unpkg.com/tippy.js@6'
 ];
 
-// --- INSTALL Event ---
+// Utility: Returns true for same-origin requests
+function isSameOrigin(requestUrl) {
+  try {
+    const reqUrl = new URL(requestUrl, self.location.href);
+    return reqUrl.origin === self.location.origin;
+  } catch (e) {
+    return false;
+  }
+}
+
+// INSTALL: Precache app shell. Use Promise.allSettled so one failing external resource doesn't block install.
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Install event in progress.');
+  console.log('[Service Worker] Install event');
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching app shell...');
-      return cache.addAll(urlsToCache);
-    }).then(() => {
-      console.log('[Service Worker] App shell caching complete.');
-    })
-  );
-});
-
-// --- ACTIVATE Event ---
-self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activate event in progress.');
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[Service Worker] Clearing old cache:', cacheName);
-            return caches.delete(cacheName);
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      // Add same-origin items first using cache.addAll for better performance and integrity.
+      try {
+        await cache.addAll(urlsToCache);
+        console.log('[Service Worker] Pre-cached same-origin resources.');
+      } catch (err) {
+        // If cache.addAll fails (e.g., a missing file), fallback to adding items individually to continue install.
+        console.warn('[Service Worker] cache.addAll failed, attempting to cache individually:', err);
+        await Promise.all(urlsToCache.map(async (url) => {
+          try {
+            const resp = await fetch(new Request(url, { cache: 'reload' }));
+            if (resp && resp.ok) await cache.put(url, resp);
+          } catch (e) {
+            console.warn('[Service Worker] Failed to cache', url, e);
           }
-        })
-      );
-    })
+        }));
+      }
+
+      // Attempt to fetch and cache external resources but do not fail install if they can't be cached.
+      await Promise.allSettled(externalResources.map(async (url) => {
+        try {
+          const resp = await fetch(url, { mode: 'no-cors' });
+          // Even opaque responses can be stored; put them only if a response is returned.
+          if (resp) await cache.put(url, resp.clone());
+        } catch (e) {
+          console.warn('[Service Worker] External resource failed to cache:', url, e);
+        }
+      }));
+
+      // Ensure the service worker activates immediately without waiting.
+      await self.skipWaiting();
+    })()
   );
-  return self.clients.claim();
 });
 
-// --- FETCH Event ---
-// Implements a "Network first, falling back to Cache" strategy.
+// ACTIVATE: Clean up old caches and take control of clients.
+self.addEventListener('activate', (event) => {
+  console.log('[Service Worker] Activate event');
+  event.waitUntil(
+    (async () => {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((name) => {
+        if (name !== CACHE_NAME) {
+          console.log('[Service Worker] Deleting old cache:', name);
+          return caches.delete(name);
+        }
+      }));
+      await self.clients.claim();
+    })()
+  );
+});
+
+// FETCH: Offline-first strategy for navigation and static assets.
+// - Try cache first. If not found, go to network and cache the successful response.
+// - For navigations, try to serve index.html from cache first for SPA behavior.
 self.addEventListener('fetch', (event) => {
-  // We only handle GET requests.
   if (event.request.method !== 'GET') {
     return;
   }
-  
-  event.respondWith(
-    // 1. Try to fetch from the network first.
-    fetch(event.request)
-      .then((networkResponse) => {
-        // If the fetch is successful, we should cache the new response.
-        // It's important to clone the response, as it can only be consumed once.
-        const responseToCache = networkResponse.clone();
-        
-        caches.open(CACHE_NAME).then((cache) => {
-            // Only cache valid (200 OK) responses.
-            if (responseToCache.status === 200) {
-              cache.put(event.request, responseToCache);
-            }
-        });
-        
-        // Return the fresh response from the network.
+
+  const requestUrl = event.request.url;
+
+  // Avoid handling requests to browser extensions or other non-http(s) protocols
+  if (!requestUrl.startsWith('http')) {
+    return;
+  }
+
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+
+    // Navigation requests: treat as cache-first and fallback to network, then to offline fallback.
+    if (event.request.mode === 'navigate') {
+      const cachedNav = await cache.match(OFFLINE_FALLBACK);
+      if (cachedNav) {
+        return cachedNav;
+      }
+
+      try {
+        const networkResponse = await fetch(event.request);
+        // Cache successful navigation responses (HTML) for future navigations
+        if (networkResponse && networkResponse.ok) {
+          await cache.put(OFFLINE_FALLBACK, networkResponse.clone());
+        }
         return networkResponse;
-      })
-      .catch(() => {
-        // 2. If the network fetch fails (e.g., user is offline),
-        // we then try to find a match in the cache.
-        console.log(`[Service Worker] Network failed for ${event.request.url}. Attempting to serve from cache.`);
-        return caches.match(event.request).then((cachedResponse) => {
-            // If a cached response is found, return it.
-            if (cachedResponse) {
-                return cachedResponse;
-            }
-            // If the request is not in the cache either, the browser will handle the error.
-            // (You could return a custom offline page here if you wanted to).
-            return new Response("You are offline and this resource isn't cached.", {
-              status: 404,
-              statusText: "Offline and not in cache",
-              headers: new Headers({ "Content-Type": "text/plain" }),
-            });
-        });
-      })
-  );
+      } catch (err) {
+        // If network fails and no cached index.html, try to return any cached page, else return fallback offline message
+        const fallback = await cache.match(OFFLINE_FALLBACK);
+        if (fallback) return fallback;
+        return new Response('Offline', { status: 503, statusText: 'Service Unavailable', headers: { 'Content-Type': 'text/plain' } });
+      }
+    }
+
+    // For other GET requests: prefer cache, then network, then cache fallback.
+    const cachedResponse = await cache.match(event.request);
+    if (cachedResponse) {
+      // Asynchronously update the cache in the background (stale-while-revalidate)
+      event.waitUntil((async () => {
+        try {
+          const networkResp = await fetch(event.request);
+          if (networkResp && networkResp.ok) {
+            await cache.put(event.request, networkResp.clone());
+          }
+        } catch (e) {
+          // Ignore network errors during background update
+        }
+      })());
+
+      return cachedResponse;
+    }
+
+    // If not cached, try network and cache the result for future use.
+    try {
+      const networkResponse = await fetch(event.request);
+      if (networkResponse && networkResponse.ok) {
+        try {
+          await cache.put(event.request, networkResponse.clone());
+        } catch (e) {
+          // Some requests (cross-origin, opaque) may throw when trying to cache; ignore.
+        }
+      }
+      return networkResponse;
+    } catch (err) {
+      // If network fails, try to return any cached fallback or respond with a simple message.
+      const fallback = await cache.match(OFFLINE_FALLBACK);
+      if (fallback) return fallback;
+      return new Response("You are offline and this resource isn't cached.", {
+        status: 503,
+        statusText: 'Offline and not in cache',
+        headers: new Headers({ 'Content-Type': 'text/plain' })
+      });
+    }
+  })());
 });
