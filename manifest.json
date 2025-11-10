@@ -1,26 +1,21 @@
-
 {
-  "name": "Divine Words (Scaled)",
-  "short_name": "Divine Words",
-  "description": "An offline-first, private, and customizable Bible study and presentation tool.",
-  "start_url": ".",
-  "scope": ".",
+  "name": "Goodman Bible",
+  "short_name": "GoodmanBible",
+  "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#1a1a1d",
-  "theme_color": "#DC143C",
-  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#222222",
+  "description": "A Bible tool for offline and online use.",
   "icons": [
     {
       "src": "assets/icons/icon-192x192.png",
-      "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "assets/icons/icon-512x512.png",
-      "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
