@@ -1,18 +1,6 @@
-// sw.js
-
-// Offline-first Service Worker for goodman-bible
-// - Uses a cache-first strategy for navigation and static assets (serves cached content when available)
-// - Falls back to network when resource is not cached, then caches successful network responses
-// - Handles third-party resources gracefully during install (doesn't fail install if an item can't be cached)
-// - Cleans up old caches on activate and claims clients so the new SW takes control immediately
-
-const CACHE_VERSION = 4;
-const CACHE_NAME = `divine-words-cache-v${CACHE_VERSION}`;
-const OFFLINE_FALLBACK = './index.html';
-
-// Files to pre-cache (same-origin preferred). External resources may fail to cache and will be skipped.
+const CACHE_NAME = 'site-cache-v1';
 const urlsToCache = [
-  './',
+  '/',
   'index.html',
   'app.html',
   'datamanager.html',
@@ -21,9 +9,6 @@ const urlsToCache = [
   'audiovisual_settings.html',
   'audiovisual_manager.html',
   'help.html',
-  'manifest.json',
-
-  // CSS
   'styles/style.css',
   'styles/base.css',
   'styles/components/buttons.css',
@@ -33,8 +18,6 @@ const urlsToCache = [
   'styles/pages/datamanager.css',
   'styles/pages/exporter.css',
   'styles/pages/index.css',
-
-  // Legacy scripts (if still used by pages)
   'scripts/script.js',
   'scripts/main_app_script.js',
   'scripts/datamanager_script.js',
@@ -48,11 +31,64 @@ const urlsToCache = [
   'scripts/notes_manager.js',
   'scripts/openbible_topics_importer.js',
   'scripts/side_panel_manager.js',
-
-  // Refactored modules
   'js/core/app.js',
   'js/core/bibleManager.js',
   'js/core/collectionManager.js',
+  'js/core/timer.js',
+  'js/database/db.js',
+  'js/pages/index.js',
+  'js/ui/modals.js',
+  'js/ui/navbar.js',
+  'js/ui/settings.js',
+  'js/ui/statusBar.js',
+  'js/utils/constants.js',
+  'js/utils/parser.js',
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      if (response) {
+        event.waitUntil(
+          fetch(event.request).then(networkResponse => {
+            if (networkResponse && networkResponse.ok) {
+              return caches.open(CACHE_NAME).then(cache => cache.put(event.request, networkResponse.clone()));
+            }
+          })
+        );
+        return response;
+      }
+      return fetch(event.request)
+        .then(networkResponse => {
+          if (networkResponse && networkResponse.ok) {
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, networkResponse.clone()));
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          if (event.request.destination === 'document') {
+            return caches.match('index.html');
+          }
+          return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+        });
+    })
+  );
+});  'js/core/collectionManager.js',
   'js/core/timer.js',
   'js/database/db.js',
   'js/pages/index.js',
