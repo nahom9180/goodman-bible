@@ -1,4 +1,17 @@
+:root {
+    --bg-color: #1a1a1d;
+    --text-color: #c5c6c7;
+    --brand-color: #DC143C;
+    --verse-card-bg: #2c2f33;
+    --options-panel-border: #4f4f52;
+    --options-panel-item-hover-bg: rgba(255, 255, 255, 0.05);
+    --button-text-color: #ffffff;
+    --button-hover-bg: #b21030;
+}
+
 body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -59,6 +72,14 @@ p {
     border-color: var(--button-hover-bg);
 }
 
+.large-cta {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.2rem;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 2rem auto;
+}
+
 .secondary-button {
     background-color: transparent;
     color: var(--text-color);
@@ -70,23 +91,99 @@ p {
     border-color: var(--brand-color);
 }
 
+.recent-collections-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 1rem auto 2rem auto;
+    text-align: left;
+}
+
+.recent-collections-container h2 {
+    font-family: 'Merriweather', serif;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--options-panel-border);
+    padding-bottom: 0.5rem;
+}
+
+.recent-collections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 40vh; /* Allow scrolling for long lists */
+    overflow-y: auto;
+    padding-right: 10px; /* Space for scrollbar */
+}
+
+/* Scrollbar styling for a nightly look */
+.recent-collections-list::-webkit-scrollbar {
+    width: 8px;
+}
+.recent-collections-list::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+.recent-collections-list::-webkit-scrollbar-thumb {
+    background-color: var(--options-panel-border);
+    border-radius: 4px;
+}
+.recent-collections-list::-webkit-scrollbar-thumb:hover {
+    background-color: var(--brand-color);
+}
+
+
+.recent-collection-item {
+    display: block;
+    padding: 1rem;
+    background-color: var(--verse-card-bg);
+    border: 1px solid var(--options-panel-border);
+    border-radius: 5px;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.recent-collection-item:hover {
+    background-color: var(--options-panel-item-hover-bg);
+    border-color: var(--brand-color);
+}
+
+.recent-collection-name {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.recent-progress-bg {
+    width: 100%;
+    background-color: #1a1a1d; /* Darker than the item bg */
+    border-radius: 5px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.recent-progress-fill {
+    width: 0%;
+    height: 100%;
+    background-color: var(--brand-color);
+    border-radius: 5px;
+    transition: width 0.5s ease;
+}
+
+.no-recents-message {
+    font-style: italic;
+    opacity: 0.7;
+    text-align: center;
+    padding: 1rem;
+}
+
+.secondary-actions {
+    margin-bottom: 1rem;
+}
+
+
 .startup-preference {
     margin-bottom: 2rem;
-}
-
-.subtle-button {
-    background-color: transparent;
-    border: 1px solid var(--brand-color);
-    color: var(--brand-color);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.subtle-button:hover {
-    background-color: var(--brand-color);
-    color: var(--button-text-color);
 }
 
 footer {
@@ -94,43 +191,4 @@ footer {
     bottom: 1rem;
     font-size: 0.8rem;
     opacity: 0.7;
-}
-
-.modal.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.bible-checkbox-group {
-    text-align: left;
-    margin-bottom: 1rem;
-}
-
-.bible-checkbox-item {
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.progress-container {
-    width: 100%;
-}
-
-.progress-bar-label {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-.progress-bar-bg {
-    width: 100%;
-    background-color: var(--options-panel-border);
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-bar-fill {
-    width: 0%;
-    height: 10px;
-    background-color: var(--brand-color);
-    border-radius: 5px;
-    transition: width 0.3s ease;
 }
