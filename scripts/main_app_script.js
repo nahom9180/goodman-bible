@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const PULSE_THRESHOLD_SECONDS = 5;
     let verseChangeFlashTimeoutId;
     let wasPausedBeforeModalOpen = null;
+    let autoPausedByVisibility = false; // <<< NEW state variable for visibility handling
 
     let allTimerButtonsInOptions = []; 
 
@@ -1312,6 +1313,26 @@ document.addEventListener('DOMContentLoaded', () => {
             if(dynamicBrandArea) dynamicBrandArea.textContent = "DB Error";
             return;
         }
+
+        // --- START: PAGE VISIBILITY API HANDLER ---
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Page is now hidden. Check if the timer is running and if we should pause it.
+                if (!isPaused) {
+                    autoPausedByVisibility = true; // Set flag so we know to auto-resume
+                    pauseTimer(true); // isSystemPause = true
+                    appShowStatus("Timer paused (app hidden)", false, 2000);
+                }
+            } else {
+                // Page is now visible. Check if we should auto-resume.
+                if (autoPausedByVisibility) {
+                    autoPausedByVisibility = false; // Reset the flag immediately
+                    resumeTimer();
+                    appShowStatus("Timer resumed", false, 2000);
+                }
+            }
+        });
+        // --- END: PAGE VISIBILITY API HANDLER ---
 
         if (dynamicBrandArea) dynamicBrandArea.textContent = "Loading...";
         if (goodmanLogoInStatus) goodmanLogoInStatus.textContent = "Goodman";

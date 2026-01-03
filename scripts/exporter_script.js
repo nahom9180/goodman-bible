@@ -286,15 +286,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         default: bulletPrefix = ""; break;
                     }
                     
-                    if (outputString.length > 0 && !outputString.endsWith(textOptions.entrySep) && !(textOptions.addHeader && i===0 && outputString.endsWith(`--- Collection: ${collName} ---`))) {
-                         outputString += textOptions.entrySep; // Ensure entry separator before new item if not first or just after header
-                    } else if (textOptions.addHeader && i === 0 && outputString.endsWith(`--- Collection: ${collName} ---`)){
-                         outputString += "\n"; // Add a newline after header before the first item
-                    }
-
-
                     if (translationIds.length > 1) {
-                        let multiEntryLines = [`${bulletPrefix}${entry.reference}`];
+                        // --- START: MODIFIED MULTI-TRANSLATION LOGIC ---
+                        let foundTextLines = [];
+                        let wasAnyTextFound = false;
+
                         for (const transId of translationIds) {
                             let transName = transId;
                             const selectOption = Array.from(exporterTranslationSelect.options).find(opt => opt.value === transId);
@@ -302,13 +298,44 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                             const versesForThisTrans = allTranslationsData[transId];
                             const verseText = getVerseTextForEntry(entry, versesForThisTrans);
-                            multiEntryLines.push(`\t(${transName})${textOptions.refTextSep}${verseText || "(Text not found)"}`);
+
+                            // Only add the line if text was found
+                            if (verseText) {
+                                wasAnyTextFound = true;
+                                foundTextLines.push(`\t(${transName})${textOptions.refTextSep}${verseText}`);
+                            }
                         }
-                        outputString += multiEntryLines.join('\n');
+
+                        // Only add the entry to the output if at least one translation had the verse
+                        if (wasAnyTextFound) {
+                            // Separator logic
+                            if (outputString.length > 0 && !outputString.endsWith(textOptions.entrySep) && !(textOptions.addHeader && i===0 && outputString.endsWith(`--- Collection: ${collName} ---`))) {
+                                outputString += textOptions.entrySep;
+                            } else if (textOptions.addHeader && i === 0 && outputString.endsWith(`--- Collection: ${collName} ---`)){
+                                outputString += "\n";
+                            }
+
+                            // Add the reference header, then the found text lines
+                            outputString += `${bulletPrefix}${entry.reference}\n` + foundTextLines.join('\n');
+                        }
+                        // --- END: MODIFIED MULTI-TRANSLATION LOGIC ---
                     } else { 
+                        // --- START: MODIFIED SINGLE-TRANSLATION LOGIC ---
                         const versesForSingleTrans = allTranslationsData[translationIds[0]];
                         const verseText = getVerseTextForEntry(entry, versesForSingleTrans);
-                        outputString += `${bulletPrefix}${entry.reference}${textOptions.refTextSep}${verseText || "(Text not found)"}`;
+
+                        // Only proceed to add the entry if verse text was actually found
+                        if (verseText) {
+                            // Separator logic must be inside the condition to avoid extra newlines for skipped items
+                            if (outputString.length > 0 && !outputString.endsWith(textOptions.entrySep) && !(textOptions.addHeader && i === 0 && outputString.endsWith(`--- Collection: ${collName} ---`))) {
+                                outputString += textOptions.entrySep;
+                            } else if (textOptions.addHeader && i === 0 && outputString.endsWith(`--- Collection: ${collName} ---`)) {
+                                outputString += "\n";
+                            }
+                            
+                            outputString += `${bulletPrefix}${entry.reference}${textOptions.refTextSep}${verseText}`;
+                        }
+                        // --- END: MODIFIED SINGLE-TRANSLATION LOGIC ---
                     }
                 }
             }
