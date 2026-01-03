@@ -143,7 +143,7 @@ body.fullscreen-active .navbar {
     overflow: hidden;
     text-overflow: ellipsis;
     user-select: none;
- text-shadow: 0 0 15px rgba(var(--brand-color-rgb), 1), 0 0 10px rgba(var(--brand-color-rgb), 0.8), 0 0 5px rgba(0, 0, 0, 0.5);
+ /*text-shadow: 0 0 15px rgba(var(--brand-color-rgb), 1), 0 0 10px rgba(var(--brand-color-rgb), 0.8), 0 0 5px rgba(0, 0, 0, 0.5);*/
 }
 .nav-controls {
     display: flex;
@@ -2005,3 +2005,50 @@ hr.settings-hr {
     background-color: var(--brand-color);
 }
 
+/* --- Application Status Bar --- */
+.app-status-bar {
+    /* ... existing styles ... */
+    position: fixed; /* This is important for the child's positioning */
+    /* ... existing styles ... */
+}
+
+/* NEW: Centered Status Message inside the Status Bar */
+#statusMessage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* Prevent text from hitting the sides */
+    max-width: 600px;
+    text-align: center;
+    z-index: 1; /* Puts it on top of the progress bar fill */
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--navbar-text);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Ensures readability over the bar */
+    pointer-events: none; /* Prevents text from blocking clicks */
+    transition: opacity 0.3s ease-in-out;
+}
+.tsk-item {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--options-panel-item-hover-bg);
+    padding-bottom: 5px;
+}
+
+.tsk-word {
+    font-weight: bold;
+    color: var(--brand-color);
+}
+
+.tsk-ref-link {
+    color: var(--text-color);
+    text-decoration: underline;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.tsk-ref-link:hover {
+    color: var(--brand-color);
+    opacity: 1;
+}
