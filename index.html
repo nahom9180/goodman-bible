@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to Divine Words</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/pages/index.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#DC143C">
 </head>
 <body>
-
     <div class="container">
         <div class="logo">DW</div>
         <h1>Welcome to Divine Words</h1>
@@ -19,66 +18,20 @@
         <div class="button-group">
             <a href="app.html" class="cta-button">Launch App</a>
             <a href="datamanager.html" class="secondary-button">Manage Data</a>
-            <a href="tools.html" class="secondary-button">Tools</a>
         </div>
         
         <div class="startup-preference">
             <input type="checkbox" id="skipStartupCheckbox">
             <label for="skipStartupCheckbox">Don't show this page at startup</label>
         </div>
-
-        <button id="openInstallModalBtn" class="subtle-button">Install Bibles</button>
-    </div>
+        	
+        </div>
     
     <footer>
         <p>&copy; 2024 Divine Words. All Rights Reserved.</p>
     </footer>
 
-    <!-- Bible Installation Modal -->
-    <div id="installBiblesModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Install Default Bibles</h3>
-                <button id="closeInstallModalBtn" class="modal-close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>It looks like you don't have any Bibles installed. Select from the options below to get started, or close this window to import your own later.</p>
-                <p style="font-size: 0.85em; margin-top: 10px; margin-bottom: 20px;">
-                    Bibles provided by <a href="https://github.com/Beblia/Holy-Bible-XML-Format" target="_blank" rel="noopener noreferrer" style="color: var(--brand-color);">Beblia on GitHub</a>.
-                </p>
-
-                <div class="bible-checkbox-group">
-                    <h4>English Bibles:</h4>
-                    <label class="bible-checkbox-item">
-                        <input type="checkbox" name="bibleToInstall" value="EnglishNKJBible.xml" data-name="New King James Bible" checked> New King James Bible (NKJV)
-                    </label>
-                    <label class="bible-checkbox-item">
-                        <input type="checkbox" name="bibleToInstall" value="EnglishAmplifiedBible.xml" data-name="Amplified Bible"> Amplified Bible
-                    </label>
-                    
-                    <h4 style="margin-top: 15px;">Amharic Bibles:</h4>
-                    <label class="bible-checkbox-item">
-                        <input type="checkbox" name="bibleToInstall" value="AmharicNASVBible.xml" data-name="Amharic NASV"> Amharic NASV
-                    </label>
-                    <label class="bible-checkbox-item">
-                        <input type="checkbox" name="bibleToInstall" value="AmharicNSTBible.xml" data-name="Amharic NST" checked> Amharic NST
-                    </label>
-                </div>
-
-                <div class="progress-container" style="margin-top: 25px;">
-                    <div class="progress-bar-label" id="installProgressBarLabel">Ready to install...</div>
-                    <div class="progress-bar-bg">
-                        <div class="progress-bar-fill" id="installProgressBarFill" style="width: 0%;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="installSelectedBiblesBtn" class="dm-button">Install Selected Bibles</button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module" src="js/pages/index.js"></script>
+    <script src="index.js"></script>
     
 </body>
 </html>

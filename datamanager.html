@@ -27,9 +27,8 @@
 
         <!-- Tab Navigation -->
         <div class="dm-tab-nav">
-            <button class="dm-tab-button active" data-tab-target="#dmTranslationsTabContent">Bible Translations</button>
-            <button class="dm-tab-button" data-tab-target="#dmCollectionsTabContent">Verse Collections</button>
-            <a href="tools.html" class="dm-tab-button" style="text-decoration: none; padding: 10px 15px; background-color: var(--button-bg-color); color: var(--button-text-color); border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='var(--button-bg-hover-color)'" onmouseout="this.style.backgroundColor='var(--button-bg-color)'">Tools</a>
+            <button class="dm-tab-button active" data-tab-target="#dmTranslationsTabContent">Bible Translations & Tools</button>
+            <button class="dm-tab-button" data-tab-target="#dmCollectionsTabContent">Verse Collections & Tools</button>
         </div>
 
         <!-- Tab Content -->
@@ -53,6 +52,39 @@
                     <button id="dmImportCrossRefBtn" class="dm-button">Import Cross-Reference (JSON)</button>
                     <input type="file" id="dmCrossRefJsonInput" accept=".json,application/json" style="display:none;">
                     <p id="crossRefStatusMessage" class="status-message-inline" style="margin-left: 10px; font-style: italic;"></p>
+                </div>
+                <!-- Bulk Reference Text Compiler -->
+                	<div class="dm-section">
+    <h2>Treasury of Scripture Knowledge (TSK)</h2>
+    <p>Import the <code>tskxref.txt</code> file.</p>
+    <button id="dmImportTskBtn" class="dm-button">Import TSK (.txt)</button>
+    <input type="file" id="dmTskFileInput" accept=".txt" style="display:none;">
+    <p id="tskStatusMessage" class="status-message-inline"></p>
+</div>
+                <div class="dm-section">
+                    <h2>Bulk Reference Text Compiler</h2>
+                    <p style="font-size:0.9rem; margin-bottom:15px;">
+                        Enter multiple Bible references or chapter prompts (one per line). 
+                        The tool will fetch the text for each, attempting to load full chapters for inputs like "Genesis 1".
+                    </p>
+                    <div class="settings-modal-item">
+                        <label for="bulkRefInput">Enter Prompts (one per line):</label>
+                        <textarea id="bulkRefInput" rows="6" placeholder="Genesis 1\nJohn 3:16-18\nPsalms 23\nMatthew 5-7 (Note: chapter ranges like 5-7 rely on extractor capability)" style="min-height: 100px; width:100%;"></textarea>
+                    </div>
+                    <div class="settings-modal-item" style="margin-top: 10px;">
+                        <label for="bulkRefTranslationSelect">Select Translation:</label>
+                        <select id="bulkRefTranslationSelect" style="max-width:400px; width:100%; padding:8px; border: 1px solid var(--options-panel-border); background-color: var(--bg-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem;">
+                            <option value="">-- Loading Translations --</option>
+                        </select>
+                    </div>
+                    <button id="bulkRefProcessBtn" class="dm-button" style="margin-top: 10px;">Process & Compile Text</button>
+                    <p id="bulkRefStatusMessage" class="status-message-inline" style="margin-left: 10px; font-style: italic;"></p>
+                    
+                    <div id="bulkRefOutputArea" style="margin-top: 20px; display:none;">
+                        <h3>Compiled Text:</h3>
+                        <textarea id="bulkRefOutputTextarea" readonly style="width:100%; min-height: 200px; font-family: var(--verse-font-family); padding:10px; background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--options-panel-border);"></textarea>
+                        <button id="bulkRefCopyBtn" class="dm-button" style="margin-top:10px;">Copy Compiled Text</button>
+                    </div>
                 </div>
             </div>
 
@@ -93,6 +125,32 @@
                     <ul id="dmCollectionsList" class="dm-item-list">
                         <!-- Populated by JS -->
                     </ul>
+                </div>
+                 <div class="dm-section">
+                    <h2>Advanced Exporter</h2>
+                    <p style="font-size:0.9rem; margin-bottom:15px;">
+                        Use the Advanced Exporter for more control over how your collection data is formatted and exported as text.
+                    </p>
+                    <a href="exporter.html" class="data-manager-link-button" style="display:inline-block; margin-top: 10px;">
+                        Open Advanced Exporter
+                    </a>
+                </div>
+                <div class="dm-section">
+                    <h2>OpenBible.info Topic Importer</h2>
+                    <p style="font-size:0.9rem; margin-bottom:15px;">
+                        Fetch topical verse lists from <a href="https://www.openbible.info/topics/" target="_blank" rel="noopener noreferrer" style="color: var(--reference-color);">OpenBible.info/topics</a>
+                        and import them to create new collections after review.
+                    </p>
+                    <div class="settings-modal-item" style="margin-bottom: 10px;"> 
+                        <label for="openBibleTopicInput">Enter Topic (e.g., "love", "forgiveness"):</label>
+                        <input type="text" id="openBibleTopicInput" placeholder="Enter topic..." style="max-width: 400px;">
+                    </div>
+                    <button id="fetchOpenBibleTopicBtn" class="dm-button">Fetch & Prepare for Extractor</button>
+                    <p id="openBibleStatusMessage" class="status-message-inline" style="margin-left: 10px; font-style: italic;"></p>
+                    <p style="font-size:0.8em; margin-top:10px; opacity:0.7;">
+                        Note: This tool parses HTML from OpenBible.info. If their site structure changes, it may break.
+                        Uses a proxy for fetching, which can be unreliable.
+                    </p>
                 </div>
             </div>
 
@@ -188,9 +246,8 @@
         }
     </script>
     <script src="scripts/script.js"></script>
+    <script src="scripts/commentary.js"></script>
     <script src="scripts/datamanager_script.js"></script>
     <script src="scripts/extractor_script.js"></script>
-    <script src="scripts/openbible_topics_importer.js"></script>
-    <script src="scripts/bulk_reference_compiler.js"></script>
 </body>
 </html>
